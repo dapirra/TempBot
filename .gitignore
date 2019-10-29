@@ -1,4 +1,5 @@
 # Folders
+.other/
 __pycache__/
 build/
 dist/
