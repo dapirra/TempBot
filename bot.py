@@ -3,6 +3,7 @@ import time
 
 import PySimpleGUIWx as sg
 import discord
+import pythoncom
 import wmi
 
 NAME = 'TempBot'
@@ -68,9 +69,17 @@ class TempBot(discord.Client):
         msg = message.content.lower()
 
         if msg == '!temp':
+
+            pythoncom.CoInitialize()  # Prevents crash that occurs bc not on main thread
+            hardware = HardwareInfo()
+
+            if hardware.failed_to_load:
+                pass  # TODO: Display Error
+                return
+
             embed = discord.Embed(color=0xff0000)
             embed.set_author(name=NAME, icon_url=ICON_URL)
-            embed.add_field(name='GPU Core', value='30°C', inline=False)
+            embed.add_field(name='GPU Core', value=hardware.gpu_temp, inline=False)
             embed.add_field(name='CPU Core # 1', value='37°C', inline=True)
             embed.add_field(name='CPU Core # 2', value='38°C', inline=True)
             embed.add_field(name='CPU Core # 3', value='37°C', inline=True)
