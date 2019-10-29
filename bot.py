@@ -3,7 +3,7 @@ import time
 
 import PySimpleGUIWx as sg
 import discord
-# import wmi
+import wmi
 
 NAME = 'TempBot'
 TOKEN = 'NjM4NjE5OTEzMTY2MjU4MTg2.XbfXOw.QTRJT7hADaYt_QgEnZ7CQPDsAnA'
@@ -11,6 +11,46 @@ ICON = b'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAn1BMVEVHcEyVoqjR4+uywcg
 ICON_URL = 'http://icons.iconarchive.com/icons/google/noto-emoji-travel-places/128/42650-thermometer-icon.png'
 bot: discord.Client
 tray: sg.SystemTray
+
+
+class HardwareInfo:
+    def __init__(self):
+        w = wmi.WMI(namespace=r'root\OpenHardwareMonitor')
+        sensor_info = w.Sensor()
+
+        if not sensor_info:
+            self.failed_to_load = True
+            return
+
+        self.failed_to_load = False
+        self.cpu_temps = {}
+        self.cpu_usage = {}
+
+        for sensor in sensor_info:
+            name: str = sensor.Name
+            if sensor.SensorType == 'Temperature':
+                if name.startswith('CPU Core'):
+                    cpu_num = int(name[-1])
+                    self.cpu_temps[cpu_num] = sensor.Value
+                elif name == 'GPU Core':
+                    self.gpu_temp = sensor.Value
+                elif name == 'CPU Package':
+                    self.cpu_package_temp = sensor.Value
+            elif sensor.SensorType == 'Load':
+                if name.startswith('CPU Core'):
+                    cpu_num = int(name[-1])
+                    self.cpu_usage[cpu_num] = sensor.Value
+                elif name == 'CPU Total':
+                    self.cpu_total = sensor.Value
+                elif name == 'Memory':
+                    self.memory_percent = sensor.Value
+                elif name == 'GPU Memory':
+                    self.gpu_memory_percent = sensor.Value
+            elif sensor.SensorType == 'Data':
+                if name == 'Used Memory':
+                    self.memory_used = sensor.Value
+                elif name == 'Available Memory':
+                    self.memory_available = sensor.Value
 
 
 class TempBot(discord.Client):
