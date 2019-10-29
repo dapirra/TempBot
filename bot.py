@@ -8,6 +8,7 @@ import discord
 NAME = 'TempBot'
 TOKEN = 'NjM4NjE5OTEzMTY2MjU4MTg2.XbfXOw.QTRJT7hADaYt_QgEnZ7CQPDsAnA'
 ICON = b'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAn1BMVEVHcEyVoqjR4+uywcgWGBnU3+drdHh8h4s9QkROVFfF1t3V4em6ytHN3eQMDQ40OTvK2+PX2+JhaWx5g4dxe39ma21+h4tWWFmGkJVtc3aCjZKVoqfmPTnpRUHlOTXafn7e8vvnfX3tamjrfX3mjI7mTUrmd3fimJvinaDkYF/jdXXrX13qcG+XZGPSaGfnqKx9YmKmZWTefn7omZvEZ2Z/KQCEAAAAHHRSTlMAn+SyBfFffyg40f6+4wEf3PlNeGugn6CfoH6f9oJbWAAAAGtJREFUGNNjYAADFhE2PgZkIKWgwIYiwGisz44qoKSMKiBuII8qII2uQtLQCFVAzEQRVUBCD01AVBfVUE5WbR1eDiQBLjVZWRVmBJ+FW0ZGRpUJSYWAppycFg+SgJCgugYrJ7KpHOzC/BAWAF9YBtSJcOPLAAAAAElFTkSuQmCC'
+ICON_URL = 'http://icons.iconarchive.com/icons/google/noto-emoji-travel-places/128/42650-thermometer-icon.png'
 bot: discord.Client
 tray: sg.SystemTray
 
@@ -27,7 +28,8 @@ class TempBot(discord.Client):
         msg = message.content.lower()
 
         if msg == '!temp':
-            embed = discord.Embed(title="TempBot", color=0xff0000)
+            embed = discord.Embed(color=0xff0000)
+            embed.set_author(name=NAME, icon_url=ICON_URL)
             embed.add_field(name='GPU Core', value='30°C', inline=False)
             embed.add_field(name='CPU Core # 1', value='37°C', inline=True)
             embed.add_field(name='CPU Core # 2', value='38°C', inline=True)
