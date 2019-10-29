@@ -44,14 +44,14 @@ class HardwareInfo:
                 elif name == 'CPU Total':
                     self.cpu_total = f'{round(sensor.Value, 2)}%'
                 elif name == 'Memory':
-                    self.memory_percent_used = f'{round(sensor.Value, 1)}%'
+                    self.ram_percent_used = f'{round(sensor.Value, 1)}%'
                 elif name == 'GPU Memory':
                     self.gpu_memory_percent_used = f'{round(sensor.Value, 1)}%'
             elif sensor.SensorType == 'Data':
                 if name == 'Used Memory':
-                    self.memory_used = f'{round(sensor.Value, 1)} GB'
+                    self.ram_used = f'{round(sensor.Value, 1)} GB'
                 elif name == 'Available Memory':
-                    self.memory_available = f'{round(sensor.Value, 1)} GB'
+                    self.ram_available = f'{round(sensor.Value, 1)} GB'
 
 
 class TempBot(discord.Client):
