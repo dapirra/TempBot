@@ -31,26 +31,26 @@ class HardwareInfo:
             if sensor.SensorType == 'Temperature':
                 if name.startswith('CPU Core'):
                     cpu_num = int(name[-1])
-                    self.cpu_temps[cpu_num] = sensor.Value
+                    self.cpu_temps[cpu_num] = f'{sensor.Value} °C'
                 elif name == 'GPU Core':
-                    self.gpu_temp = sensor.Value
+                    self.gpu_temp = f'{sensor.Value} °C'
                 elif name == 'CPU Package':
-                    self.cpu_package_temp = sensor.Value
+                    self.cpu_package_temp = f'{sensor.Value} °C'
             elif sensor.SensorType == 'Load':
                 if name.startswith('CPU Core'):
                     cpu_num = int(name[-1])
-                    self.cpu_usage[cpu_num] = sensor.Value
+                    self.cpu_usage[cpu_num] = f'{round(sensor.Value, 2)}%'
                 elif name == 'CPU Total':
-                    self.cpu_total = sensor.Value
+                    self.cpu_total = f'{round(sensor.Value, 2)}%'
                 elif name == 'Memory':
-                    self.memory_percent = sensor.Value
+                    self.memory_percent_used = f'{round(sensor.Value, 1)}%'
                 elif name == 'GPU Memory':
-                    self.gpu_memory_percent = sensor.Value
+                    self.gpu_memory_percent_used = f'{round(sensor.Value, 1)}%'
             elif sensor.SensorType == 'Data':
                 if name == 'Used Memory':
-                    self.memory_used = sensor.Value
+                    self.memory_used = f'{round(sensor.Value, 1)} GB'
                 elif name == 'Available Memory':
-                    self.memory_available = sensor.Value
+                    self.memory_available = f'{round(sensor.Value, 1)} GB'
 
 
 class TempBot(discord.Client):
