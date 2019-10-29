@@ -43,7 +43,7 @@ class HardwareInfo:
                     cpu_num = int(name[-1])
                     self.cpu_usage[cpu_num] = f'{round(sensor.Value, 2)}%'
                 elif name == 'CPU Total':
-                    self.cpu_total = f'{round(sensor.Value, 2)}%'
+                    self.cpu_total_usage = f'{round(sensor.Value, 2)}%'
                 elif name == 'Memory':
                     self.ram_percent_used = f'{round(sensor.Value, 1)}%'
                 elif name == 'GPU Memory':
