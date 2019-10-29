@@ -18,6 +18,7 @@ class HardwareInfo:
     def __init__(self):
         w = wmi.WMI(namespace=r'root\OpenHardwareMonitor')
         sensor_info = w.Sensor()
+        device_info = w.Hardware()
 
         if not sensor_info:
             self.failed_to_load = True
@@ -52,6 +53,18 @@ class HardwareInfo:
                     self.ram_used = f'{round(sensor.Value, 1)} GB'
                 elif name == 'Available Memory':
                     self.ram_available = f'{round(sensor.Value, 1)} GB'
+
+        self.cpu_cores = len(self.cpu_temps)
+
+        for device in device_info:
+            if device.HardwareType == 'CPU':
+                self.cpu_name = device.Name
+            elif device.HardwareType == 'RAM':
+                self.ram_name = device.Name
+            elif device.HardwareType == 'Mainboard':
+                self.mother_board_name = device.Name
+            elif device.HardwareType.upper().startswith('GPU'):
+                self.gpu_name = device.Name
 
 
 class TempBot(discord.Client):
