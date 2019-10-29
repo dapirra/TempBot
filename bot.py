@@ -33,11 +33,11 @@ class HardwareInfo:
             if sensor.SensorType == 'Temperature':
                 if name.startswith('CPU Core'):
                     cpu_num = int(name[-1])
-                    self.cpu_temps[cpu_num] = f'{sensor.Value} °C'
+                    self.cpu_temps[cpu_num] = f'{round(sensor.Value)}°C'
                 elif name == 'GPU Core':
-                    self.gpu_temp = f'{sensor.Value} °C'
+                    self.gpu_temp = f'{round(sensor.Value)}°C'
                 elif name == 'CPU Package':
-                    self.cpu_package_temp = f'{sensor.Value} °C'
+                    self.cpu_package_temp = f'{round(sensor.Value)}°C'
             elif sensor.SensorType == 'Load':
                 if name.startswith('CPU Core'):
                     cpu_num = int(name[-1])
