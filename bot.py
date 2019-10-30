@@ -4,6 +4,7 @@ import time
 import PySimpleGUIWx as sg
 import discord
 import pythoncom
+import win32gui
 import wmi
 
 NAME = 'TempBot'
@@ -129,6 +130,9 @@ def main():
 
     while not bot.started:  # Wait for bot to login
         time.sleep(0.25)
+
+    if HardwareInfo().failed_to_load:
+        win32gui.MessageBox(None, 'Open Hardware Monitor needs to be running for !temp to work.', 'Warning', 48)
 
     while True:  # Handle Tray events
         event = tray.Read()
