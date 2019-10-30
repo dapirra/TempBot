@@ -101,10 +101,10 @@ class TempBot(discord.Client):
             embed.set_author(name=NAME, icon_url=ICON_URL)
             embed.add_field(name='CPU Info:', value=f'{hw.cpu_name}: **{hw.cpu_package_temp}** | **{hw.cpu_total_usage}**\n\u200b', inline=False)
             for i in range(1, hw.cpu_cores + 1):
-                embed.add_field(name=f'CPU Core # {i}', value=f'{hw.cpu_temps[i]} | {hw.cpu_usage[i]}', inline=True)
+                embed.add_field(name=f'CPU Core #{i}', value=f'{hw.cpu_temps[i]} | {hw.cpu_usage[i]}', inline=True)
                 if i % 2 == 0:
                     embed.add_field(name='\u200b', value='\u200b', inline=True)  # Blank field
-            embed.add_field(name='\u200b\nRAM Info:', value=f'{hw.ram_name}: {hw.ram_percent_used} {hw.ram_available}/{hw.ram_total} GB\n\u200b', inline=False)
+            embed.add_field(name='\u200b\nRAM Info:', value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_available}/{hw.ram_total} GB\n\u200b', inline=False)
             embed.add_field(name='GPU Info:', value=f'{hw.gpu_name}: {hw.gpu_temp}', inline=False)
             await message.channel.send(embed=embed)
 
