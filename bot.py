@@ -86,7 +86,6 @@ class TempBot(discord.Client):
         msg = message.content.lower()
 
         if msg == '!temp':
-
             pythoncom.CoInitialize()  # Prevents crash that occurs bc not on main thread
             hw = HardwareInfo()
 
@@ -99,13 +98,15 @@ class TempBot(discord.Client):
 
             embed = discord.Embed(color=0xff0000)
             embed.set_author(name=NAME, icon_url=ICON_URL)
-            embed.add_field(name='CPU Info:', value=f'{hw.cpu_name}: **{hw.cpu_package_temp}** | **{hw.cpu_total_usage}**\n\u200b', inline=False)
+            embed.add_field(name='CPU Info:', inline=False,
+                            value=f'{hw.cpu_name}: **{hw.cpu_package_temp}** | **{hw.cpu_total_usage}**\n\u200b')
             for i in range(1, hw.cpu_cores + 1):
                 embed.add_field(name=f'CPU Core #{i}', value=f'{hw.cpu_temps[i]} | {hw.cpu_usage[i]}', inline=True)
                 if i % 2 == 0:
                     embed.add_field(name='\u200b', value='\u200b', inline=True)  # Blank field
-            embed.add_field(name='\u200b\nRAM Info:', value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_available}/{hw.ram_total} GB\n\u200b', inline=False)
-            embed.add_field(name='GPU Info:', value=f'{hw.gpu_name}: {hw.gpu_temp}', inline=False)
+            embed.add_field(name='\u200b\nRAM Info:', inline=False,
+                            value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_available}/{hw.ram_total} GB')
+            embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: {hw.gpu_temp}', inline=False)
             await message.channel.send(embed=embed)
 
 
@@ -132,7 +133,7 @@ def main():
         time.sleep(0.25)
 
     if HardwareInfo().failed_to_load:
-        win32gui.MessageBox(None, 'Open Hardware Monitor needs to be running for !temp to work.', 'Warning', 48)
+        win32gui.MessageBox(None, 'Open Hardware Monitor must be running for !temp to work.', 'Warning', 48)
 
     while True:  # Handle Tray events
         event = tray.Read()
