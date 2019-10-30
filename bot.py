@@ -87,28 +87,21 @@ class TempBot(discord.Client):
         if msg == '!temp':
 
             pythoncom.CoInitialize()  # Prevents crash that occurs bc not on main thread
-            hardware = HardwareInfo()
+            hw = HardwareInfo()
 
-            if hardware.failed_to_load:
+            if hw.failed_to_load:
                 pass  # TODO: Display Error
                 return
 
             embed = discord.Embed(color=0xff0000)
             embed.set_author(name=NAME, icon_url=ICON_URL)
-            embed.add_field(name='CPU Info', value=hardware.cpu_name, inline=False)
-            embed.add_field(name='CPU Package Temp', value=hardware.cpu_package_temp, inline=True)
-            embed.add_field(name='CPU Total Usage', value=hardware.cpu_total_usage, inline=True)
-            for i in range(1, hardware.cpu_cores + 1):
-                embed.add_field(name=f'CPU Core # {i} Temp', value=hardware.cpu_temps[i], inline=True)
-            for i in range(1, hardware.cpu_cores + 1):
-                embed.add_field(name=f'CPU Core # {i} Usage', value=hardware.cpu_usage[i], inline=True)
-            embed.add_field(name='RAM Info', value=hardware.ram_name, inline=False)
-            embed.add_field(name='RAM Used', value=hardware.ram_percent_used, inline=True)
-            embed.add_field(name='RAM Available', value=hardware.ram_available, inline=True)
-            embed.add_field(name='RAM Remaining', value=hardware.ram_used, inline=True)
-            embed.add_field(name='GPU Info', value=hardware.gpu_name, inline=False)
-            embed.add_field(name='GPU Core', value=hardware.gpu_temp, inline=True)
-            embed.add_field(name='GPU Memory Used', value=hardware.gpu_memory_percent_used, inline=True)
+            embed.add_field(name='CPU Info:', value=f'{hw.cpu_name}: **{hw.cpu_package_temp}** | **{hw.cpu_total_usage}**\n\u200b', inline=False)
+            for i in range(1, hw.cpu_cores + 1):
+                embed.add_field(name=f'CPU Core # {i}', value=f'{hw.cpu_temps[i]} | {hw.cpu_usage[i]}', inline=True)
+                if i % 2 == 0:
+                    embed.add_field(name='\u200b', value='\u200b', inline=True)  # Blank field
+            embed.add_field(name='\u200b\nRAM Info:', value=f'{hw.ram_name}: {hw.ram_percent_used} {hw.ram_available}/{hw.ram_total} GB\n\u200b', inline=False)
+            embed.add_field(name='GPU Info:', value=f'{hw.gpu_name}: {hw.gpu_temp}', inline=False)
             await message.channel.send(embed=embed)
 
 
