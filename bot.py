@@ -104,9 +104,9 @@ class TempBot(discord.Client):
                 embed.add_field(name=f'CPU Core #{i}', value=f'{hw.cpu_temps[i]} | {hw.cpu_usage[i]}', inline=True)
                 if i % 2 == 0:
                     embed.add_field(name='\u200b', value='\u200b', inline=True)  # Blank field
+            embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: **{hw.gpu_temp}**', inline=False)
             embed.add_field(name='\u200b\nRAM Info:', inline=False,
-                            value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_available}/{hw.ram_total} GB')
-            embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: {hw.gpu_temp}', inline=False)
+                            value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_used}/{hw.ram_total} GB')
             await message.channel.send(embed=embed)
 
 
