@@ -50,10 +50,13 @@ class HardwareInfo:
                     self.gpu_memory_percent_used = f'{round(sensor.Value, 1)}%'
             elif sensor.SensorType == 'Data':
                 if name == 'Used Memory':
-                    self.ram_used = f'{round(sensor.Value, 1)} GB'
+                    self._ram_used = sensor.Value
                 elif name == 'Available Memory':
-                    self.ram_available = f'{round(sensor.Value, 1)} GB'
+                    self._ram_available = sensor.Value
 
+        self.ram_used = f'{round(self._ram_used, 1)}'
+        self.ram_available = f'{round(self._ram_available, 1)}'
+        self.ram_total = f'{round(self._ram_used + self._ram_available)}'
         self.cpu_cores = len(self.cpu_temps)
 
         for device in device_info:
