@@ -90,7 +90,10 @@ class TempBot(discord.Client):
             hw = HardwareInfo()
 
             if hw.failed_to_load:
-                pass  # TODO: Display Error
+                embed = discord.Embed(title='Error:', color=0xff0000,
+                                      description='Open Hardware Monitor is not running.')
+                embed.set_author(name=NAME, icon_url=ICON_URL)
+                await message.channel.send(embed=embed)
                 return
 
             embed = discord.Embed(color=0xff0000)
