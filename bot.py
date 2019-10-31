@@ -91,10 +91,10 @@ class TempBot(discord.Client):
                     embed = discord.Embed(title='Error:', color=0xff0000,
                                           description='Open Hardware Monitor is not running.')
                     embed.set_author(name=NAME, icon_url=ICON_URL)
-                    if not temp_msg:
-                        temp_msg = await message.channel.send(embed=embed)
-                    else:
+                    if temp_msg:
                         await temp_msg.edit(embed=embed)
+                    else:
+                        temp_msg = await message.channel.send(embed=embed)
                     await asyncio.sleep(5)
                     continue
 
@@ -110,10 +110,10 @@ class TempBot(discord.Client):
                 embed.add_field(name='\u200b\nRAM Info:', inline=False,
                                 value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_used}/{hw.ram_total} GB')
 
-                if not temp_msg:
-                    temp_msg = await message.channel.send(embed=embed)
-                else:
+                if temp_msg:
                     await temp_msg.edit(embed=embed)
+                else:
+                    temp_msg = await message.channel.send(embed=embed)
                 await asyncio.sleep(5)
 
 
