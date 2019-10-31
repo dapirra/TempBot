@@ -1,5 +1,4 @@
 import threading
-import time
 
 import PySimpleGUIWx as sg
 import discord
@@ -72,15 +71,9 @@ class HardwareInfo:
 
 
 class TempBot(discord.Client):
-    started = False
-
-    async def startup(self):
-        self.started = True
 
     async def on_ready(self):
         print('Logged in as', self.user)
-        if not self.started:
-            await self.startup()
 
     async def on_message(self, message: discord.Message):
         msg = message.content.lower()
@@ -129,9 +122,6 @@ def main():
         tooltip=NAME
     )
 
-    while not bot.started:  # Wait for bot to login
-        time.sleep(0.25)
-
     if HardwareInfo().failed_to_load:
         win32gui.MessageBox(None, 'Open Hardware Monitor must be running for !temp to work.', 'Warning', 48)
 
@@ -141,7 +131,6 @@ def main():
             continue
         elif event == 'Exit':
             tray.Hide()
-            bot.started = False
             bot.loop.create_task(bot.close())
             break
 
