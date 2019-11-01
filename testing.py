@@ -1,5 +1,5 @@
-import wmi
 import win32gui
+import wmi
 
 w = wmi.WMI(namespace=r'root\OpenHardwareMonitor')
 temperature_infos = w.Sensor()
