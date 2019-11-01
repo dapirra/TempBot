@@ -141,9 +141,7 @@ def main():
 
     while True:  # Handle Tray events
         event = tray.Read()
-        if event == '__TIMEOUT__':
-            continue
-        elif event == 'Exit':
+        if event == 'Exit':
             tray.Hide()
             bot.loop.create_task(bot.close())
             break
