@@ -19,6 +19,7 @@ tray: sg.SystemTray
 class HardwareInfo:
     def __init__(self):
         w = wmi.WMI(namespace=r'root\OpenHardwareMonitor')
+        cimv2 = wmi.WMI(namespace=r'root\CIMV2')
         sensor_info = w.Sensor()
         device_info = w.Hardware()
 
@@ -71,6 +72,21 @@ class HardwareInfo:
             elif device.HardwareType.upper().startswith('GPU'):
                 self.gpu_name = device.Name
 
+        self._disk_usage = int(cimv2.query(
+            'SELECT DiskBytesPersec FROM Win32_PerfFormattedData_PerfDisk_PhysicalDisk WHERE NAME LIKE "%Total%"')[0]
+            .DiskBytesPersec)
+
+        self.disk_usage = size(self._disk_usage)
+
+
+def size(num_bytes: int):
+    if num_bytes < 1024:
+        return f'{num_bytes} bytes'
+    elif num_bytes < 1048576:
+        return f'{round(num_bytes / 1024, 2)} KB'
+    else:
+        return f'{round(num_bytes / 1048576, 2)} MB'
+
 
 class TempBot(discord.Client):
 
@@ -109,6 +125,8 @@ class TempBot(discord.Client):
                 embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: **{hw.gpu_temp}**', inline=False)
                 embed.add_field(name='\u200b\nRAM Info:', inline=False,
                                 value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_used}/{hw.ram_total} GB')
+                embed.add_field(name='\u200b\nDisk Info:', inline=False,
+                                value=f'{hw.disk_usage}')
 
                 if temp_msg:
                     await temp_msg.edit(embed=embed)
