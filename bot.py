@@ -72,11 +72,16 @@ class HardwareInfo:
             elif device.HardwareType.upper().startswith('GPU'):
                 self.gpu_name = device.Name
 
-        self._disk_usage = int(cimv2.query(
-            'SELECT DiskBytesPersec FROM Win32_PerfFormattedData_PerfDisk_PhysicalDisk WHERE NAME LIKE "%Total%"')[0]
-            .DiskBytesPersec)
+        self._disk_read = int(cimv2.query(
+            'SELECT DiskReadBytesPersec FROM Win32_PerfFormattedData_PerfDisk_PhysicalDisk WHERE NAME LIKE "%Total%"')[0]
+            .DiskReadBytesPersec)
 
-        self.disk_usage = size(self._disk_usage)
+        self._disk_write = int(cimv2.query(
+            'SELECT DiskWriteBytesPersec FROM Win32_PerfFormattedData_PerfDisk_PhysicalDisk WHERE NAME LIKE "%Total%"')[0]
+            .DiskWriteBytesPersec)
+
+        self.disk_read = size(self._disk_read)
+        self.disk_write = size(self._disk_write)
 
 
 def size(num_bytes: int):
@@ -125,8 +130,8 @@ class TempBot(discord.Client):
                 embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: **{hw.gpu_temp}**', inline=False)
                 embed.add_field(name='\u200b\nRAM Info:', inline=False,
                                 value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_used}/{hw.ram_total} GB')
-                embed.add_field(name='\u200b\nDisk Info:', inline=False,
-                                value=f'{hw.disk_usage}')
+                embed.add_field(name='\u200b\nDisk Read:', inline=True, value=f'{hw.disk_read}')
+                embed.add_field(name='\u200b\nDisk Write:', inline=True, value=f'{hw.disk_write}')
 
                 if temp_msg:
                     await temp_msg.edit(embed=embed)
