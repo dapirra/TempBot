@@ -14,6 +14,7 @@ NAME = 'TempBot'
 TOKEN = 'NjM4NjE5OTEzMTY2MjU4MTg2.XbfXOw.QTRJT7hADaYt_QgEnZ7CQPDsAnA'
 ICON = b'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAn1BMVEVHcEyVoqjR4+uywcgWGBnU3+drdHh8h4s9QkROVFfF1t3V4em6ytHN3eQMDQ40OTvK2+PX2+JhaWx5g4dxe39ma21+h4tWWFmGkJVtc3aCjZKVoqfmPTnpRUHlOTXafn7e8vvnfX3tamjrfX3mjI7mTUrmd3fimJvinaDkYF/jdXXrX13qcG+XZGPSaGfnqKx9YmKmZWTefn7omZvEZ2Z/KQCEAAAAHHRSTlMAn+SyBfFffyg40f6+4wEf3PlNeGugn6CfoH6f9oJbWAAAAGtJREFUGNNjYAADFhE2PgZkIKWgwIYiwGisz44qoKSMKiBuII8qII2uQtLQCFVAzEQRVUBCD01AVBfVUE5WbR1eDiQBLjVZWRVmBJ+FW0ZGRpUJSYWAppycFg+SgJCgugYrJ7KpHOzC/BAWAF9YBtSJcOPLAAAAAElFTkSuQmCC'
 ICON_URL = 'https://cdn.discordapp.com/avatars/638619913166258186/c267c2a4334d13f6f4e05409064adc75.webp'
+RED = 0xff0000
 bot: discord.Client
 tray: sg.SystemTray
 
@@ -113,7 +114,7 @@ class TempBot(discord.Client):
                     hw = HardwareInfo()
 
                     if hw.failed_to_load:
-                        embed = discord.Embed(title='Error:', color=0xff0000,
+                        embed = discord.Embed(title='Error:', color=RED,
                                               description='Open Hardware Monitor is not running.')
                         embed.set_author(name=NAME, icon_url=ICON_URL)
                         if temp_msg:
@@ -123,7 +124,7 @@ class TempBot(discord.Client):
                         await asyncio.sleep(5)
                         continue
 
-                    embed = discord.Embed(color=0xff0000)
+                    embed = discord.Embed(color=RED)
                     embed.set_author(name=NAME, icon_url=ICON_URL)
                     embed.add_field(name='CPU Info:', inline=False,
                                     value=f'{hw.cpu_name}: **{hw.cpu_package_temp}** | **{hw.cpu_total_usage}**\n\u200b')
