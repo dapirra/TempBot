@@ -99,45 +99,48 @@ class TempBot(discord.Client):
         print('Logged in as', self.user)
 
     async def on_message(self, message: discord.Message):
-        msg = message.content.lower()
+        msg: str = message.content.lower()
 
-        if msg == '!temp':
-            temp_msg: discord.Message = None
-            finish_at = datetime.now() + timedelta(minutes=5)
-            while datetime.now() < finish_at:
-                pythoncom.CoInitialize()  # Prevents crash that occurs bc not on main thread
-                hw = HardwareInfo()
+        if msg.startswith('!temp'):
+            command = msg.split()[1]
+            if len(msg) == 5:  # Must just be !temp
+                temp_msg: discord.Message = None
+                finish_at = datetime.now() + timedelta(minutes=5)
+                while datetime.now() < finish_at:
+                    pythoncom.CoInitialize()  # Prevents crash that occurs bc not on main thread
+                    hw = HardwareInfo()
 
-                if hw.failed_to_load:
-                    embed = discord.Embed(title='Error:', color=0xff0000,
-                                          description='Open Hardware Monitor is not running.')
+                    if hw.failed_to_load:
+                        embed = discord.Embed(title='Error:', color=0xff0000,
+                                              description='Open Hardware Monitor is not running.')
+                        embed.set_author(name=NAME, icon_url=ICON_URL)
+                        if temp_msg:
+                            await temp_msg.edit(embed=embed)
+                        else:
+                            temp_msg = await message.channel.send(embed=embed)
+                        await asyncio.sleep(5)
+                        continue
+
+                    embed = discord.Embed(color=0xff0000)
                     embed.set_author(name=NAME, icon_url=ICON_URL)
+                    embed.add_field(name='CPU Info:', inline=False,
+                                    value=f'{hw.cpu_name}: **{hw.cpu_package_temp}** | **{hw.cpu_total_usage}**\n\u200b')
+                    for i in range(1, hw.cpu_cores + 1):
+                        embed.add_field(name=f'CPU Core #{i}',
+                                        value=f'{hw.cpu_temps[i]} | {hw.cpu_usage[i]}', inline=True)
+                        if i % 2 == 0:
+                            embed.add_field(name='\u200b', value='\u200b', inline=True)  # Blank field
+                    embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: **{hw.gpu_temp}**', inline=False)
+                    embed.add_field(name='\u200b\nRAM Info:', inline=False,
+                                    value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_used}/{hw.ram_total} GB')
+                    embed.add_field(name='\u200b\nDisk Read:', inline=True, value=f'{hw.disk_read}')
+                    embed.add_field(name='\u200b\nDisk Write:', inline=True, value=f'{hw.disk_write}')
+
                     if temp_msg:
                         await temp_msg.edit(embed=embed)
                     else:
                         temp_msg = await message.channel.send(embed=embed)
                     await asyncio.sleep(5)
-                    continue
-
-                embed = discord.Embed(color=0xff0000)
-                embed.set_author(name=NAME, icon_url=ICON_URL)
-                embed.add_field(name='CPU Info:', inline=False,
-                                value=f'{hw.cpu_name}: **{hw.cpu_package_temp}** | **{hw.cpu_total_usage}**\n\u200b')
-                for i in range(1, hw.cpu_cores + 1):
-                    embed.add_field(name=f'CPU Core #{i}', value=f'{hw.cpu_temps[i]} | {hw.cpu_usage[i]}', inline=True)
-                    if i % 2 == 0:
-                        embed.add_field(name='\u200b', value='\u200b', inline=True)  # Blank field
-                embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: **{hw.gpu_temp}**', inline=False)
-                embed.add_field(name='\u200b\nRAM Info:', inline=False,
-                                value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_used}/{hw.ram_total} GB')
-                embed.add_field(name='\u200b\nDisk Read:', inline=True, value=f'{hw.disk_read}')
-                embed.add_field(name='\u200b\nDisk Write:', inline=True, value=f'{hw.disk_write}')
-
-                if temp_msg:
-                    await temp_msg.edit(embed=embed)
-                else:
-                    temp_msg = await message.channel.send(embed=embed)
-                await asyncio.sleep(5)
 
 
 def main():
