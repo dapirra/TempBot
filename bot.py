@@ -7,6 +7,8 @@ import discord
 import pythoncom
 import win32gui
 import wmi
+import wx
+import wx.lib.newevent
 
 NAME = 'TempBot'
 TOKEN = 'NjM4NjE5OTEzMTY2MjU4MTg2.XbfXOw.QTRJT7hADaYt_QgEnZ7CQPDsAnA'
@@ -141,6 +143,18 @@ class TempBot(discord.Client):
                     else:
                         temp_msg = await message.channel.send(embed=embed)
                     await asyncio.sleep(5)
+            elif command == 'exit':
+                # https://wxpython.org/Phoenix/docs/html/events_overview.html
+
+                SomeNewEvent, EVT_SOME_NEW_EVENT = wx.lib.newevent.NewEvent()
+
+                def handler(event):
+                    tray.TaskBarIcon.menu_item_chosen = event.menu_item
+                    tray.TaskBarIcon.app.ExitMainLoop()
+
+                tray.App.Bind(EVT_SOME_NEW_EVENT, handler)
+                evt = SomeNewEvent(menu_item='Exit')
+                wx.PostEvent(tray.App, evt)
 
 
 def main():
