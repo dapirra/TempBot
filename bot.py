@@ -99,9 +99,13 @@ def size(num_bytes: int):
 class TempBot(discord.Client):
     STOP = False
     temp_msg: discord.Message = None
+    first_login = True
 
     async def on_ready(self):
         print('Logged in as', self.user)
+        if self.first_login:
+            pythoncom.CoInitialize()  # Prevents crash that occurs bc not on main thread
+            self.first_login = False
 
     @staticmethod
     def gen_embed(hw, footer=None):
@@ -133,7 +137,6 @@ class TempBot(discord.Client):
         finish_at = datetime.max if minutes == -1 else datetime.now() + timedelta(minutes=minutes)
         self.STOP = False
         while datetime.now() < finish_at and not self.STOP:
-            pythoncom.CoInitialize()  # Prevents crash that occurs bc not on main thread
             hw = HardwareInfo()
 
             embed = self.gen_embed(hw, footer)
