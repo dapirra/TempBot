@@ -97,53 +97,74 @@ def size(num_bytes: int):
 
 
 class TempBot(discord.Client):
+    STOP = False
+    temp_msg: discord.Message = None
 
     async def on_ready(self):
         print('Logged in as', self.user)
+
+    @staticmethod
+    def gen_embed(hw, footer=None):
+        if hw.failed_to_load:
+            embed = discord.Embed(title='Error:', color=RED, description='Open Hardware Monitor is not running.')
+            embed.set_author(name=NAME, icon_url=ICON_URL)
+            return embed
+
+        embed = discord.Embed(color=RED)
+        embed.set_author(name=NAME, icon_url=ICON_URL)
+        embed.add_field(name='CPU Info:', inline=False,
+                        value=f'{hw.cpu_name}: **{hw.cpu_package_temp}** | **{hw.cpu_total_usage}**\n\u200b')
+        for i in range(1, hw.cpu_cores + 1):
+            embed.add_field(name=f'CPU Core #{i}', value=f'{hw.cpu_temps[i]} | {hw.cpu_usage[i]}', inline=True)
+            if i % 2 == 0:
+                embed.add_field(name='\u200b', value='\u200b', inline=True)  # Blank field
+        embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: **{hw.gpu_temp}**', inline=False)
+        embed.add_field(name='\u200b\nRAM Info:', inline=False,
+                        value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_used}/{hw.ram_total} GB')
+        embed.add_field(name='\u200b\nDisk Read:', inline=True, value=f'{hw.disk_read}')
+        embed.add_field(name='\u200b\nDisk Write:', inline=True, value=f'{hw.disk_write}')
+
+        if footer:
+            embed.set_footer(text=footer, icon_url=ICON_URL)
+
+        return embed
+
+    async def temp(self, message, minutes=-1, footer="Going indefinitely. Type '!temp stop' to stop."):
+        finish_at = datetime.max if minutes == -1 else datetime.now() + timedelta(minutes=minutes)
+        self.STOP = False
+        while datetime.now() < finish_at and not self.STOP:
+            pythoncom.CoInitialize()  # Prevents crash that occurs bc not on main thread
+            hw = HardwareInfo()
+
+            embed = self.gen_embed(hw, footer)
+            if self.temp_msg:
+                try:
+                    await self.temp_msg.edit(embed=embed)
+                except discord.HTTPException:
+                    self.STOP = True
+            else:
+                self.temp_msg = await message.channel.send(embed=embed)
+            await asyncio.sleep(5)
+        self.temp_msg = None
 
     async def on_message(self, message: discord.Message):
         msg: str = message.content.lower()
 
         if msg.startswith('!temp'):
-            command = msg.split()[1]
             if len(msg) == 5:  # Must just be !temp
-                temp_msg: discord.Message = None
-                finish_at = datetime.now() + timedelta(minutes=5)
-                while datetime.now() < finish_at:
-                    pythoncom.CoInitialize()  # Prevents crash that occurs bc not on main thread
-                    hw = HardwareInfo()
-
-                    if hw.failed_to_load:
-                        embed = discord.Embed(title='Error:', color=RED,
-                                              description='Open Hardware Monitor is not running.')
-                        embed.set_author(name=NAME, icon_url=ICON_URL)
-                        if temp_msg:
-                            await temp_msg.edit(embed=embed)
-                        else:
-                            temp_msg = await message.channel.send(embed=embed)
-                        await asyncio.sleep(5)
-                        continue
-
-                    embed = discord.Embed(color=RED)
-                    embed.set_author(name=NAME, icon_url=ICON_URL)
-                    embed.add_field(name='CPU Info:', inline=False,
-                                    value=f'{hw.cpu_name}: **{hw.cpu_package_temp}** | **{hw.cpu_total_usage}**\n\u200b')
-                    for i in range(1, hw.cpu_cores + 1):
-                        embed.add_field(name=f'CPU Core #{i}',
-                                        value=f'{hw.cpu_temps[i]} | {hw.cpu_usage[i]}', inline=True)
-                        if i % 2 == 0:
-                            embed.add_field(name='\u200b', value='\u200b', inline=True)  # Blank field
-                    embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: **{hw.gpu_temp}**', inline=False)
-                    embed.add_field(name='\u200b\nRAM Info:', inline=False,
-                                    value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_used}/{hw.ram_total} GB')
-                    embed.add_field(name='\u200b\nDisk Read:', inline=True, value=f'{hw.disk_read}')
-                    embed.add_field(name='\u200b\nDisk Write:', inline=True, value=f'{hw.disk_write}')
-
-                    if temp_msg:
-                        await temp_msg.edit(embed=embed)
-                    else:
-                        temp_msg = await message.channel.send(embed=embed)
-                    await asyncio.sleep(5)
+                await self.temp(message, 5, "Going for 5 minutes. Type !temp help for more info.")
+                return
+            command = msg.split()[1]
+            if command == 'for':
+                m = abs(int(msg.split()[-1]))
+                await self.temp(message, m,
+                                f"Going for {m} minute{'' if m == 1 else 's'}. Type '!temp stop' to stop.")
+            elif command == 'go':
+                await self.temp(message)
+            elif command == 'stop':
+                self.STOP = True
+            elif command == 'help':
+                pass  # TODO Create a help embed with all commands
             elif command == 'exit':
                 # https://wxpython.org/Phoenix/docs/html/events_overview.html
 
