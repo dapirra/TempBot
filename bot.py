@@ -15,6 +15,26 @@ TOKEN = 'NjM4NjE5OTEzMTY2MjU4MTg2.XbfXOw.QTRJT7hADaYt_QgEnZ7CQPDsAnA'
 ICON = b'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAn1BMVEVHcEyVoqjR4+uywcgWGBnU3+drdHh8h4s9QkROVFfF1t3V4em6ytHN3eQMDQ40OTvK2+PX2+JhaWx5g4dxe39ma21+h4tWWFmGkJVtc3aCjZKVoqfmPTnpRUHlOTXafn7e8vvnfX3tamjrfX3mjI7mTUrmd3fimJvinaDkYF/jdXXrX13qcG+XZGPSaGfnqKx9YmKmZWTefn7omZvEZ2Z/KQCEAAAAHHRSTlMAn+SyBfFffyg40f6+4wEf3PlNeGugn6CfoH6f9oJbWAAAAGtJREFUGNNjYAADFhE2PgZkIKWgwIYiwGisz44qoKSMKiBuII8qII2uQtLQCFVAzEQRVUBCD01AVBfVUE5WbR1eDiQBLjVZWRVmBJ+FW0ZGRpUJSYWAppycFg+SgJCgugYrJ7KpHOzC/BAWAF9YBtSJcOPLAAAAAElFTkSuQmCC'
 ICON_URL = 'https://cdn.discordapp.com/avatars/638619913166258186/c267c2a4334d13f6f4e05409064adc75.webp'
 RED = 0xff0000
+HELP_MSG = '''TempBot is designed to display hardware information of the computer that it is running on.
+
+**!temp**
+> TempBot will display hardware information for 5 minutes.
+
+**!temp go**
+> TempBot will display hardware information indefinitely (until '!temp stop' is run).
+
+**!temp for x**
+> TempBot will display hardware information for x amount of minutes.
+
+**!temp stop**
+> TempBot will stop updating the message that displays hardware information.
+
+**!temp help**
+> Displays this help message.
+
+**!temp exit**
+> Shuts TempBot down.
+'''
 bot: discord.Client
 tray: sg.SystemTray
 
@@ -171,7 +191,7 @@ class TempBot(discord.Client):
             elif command == 'stop':
                 self.STOP = True
             elif command == 'help':
-                pass  # TODO Create a help embed with all commands
+                await message.channel.send(embed=TempBot.plain_embed('TempBot Commands:', HELP_MSG))
             elif command == 'exit':
                 # https://wxpython.org/Phoenix/docs/html/events_overview.html
 
