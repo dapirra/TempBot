@@ -181,9 +181,15 @@ class TempBot(discord.Client):
             if len(msg) == 5:  # Must just be !temp
                 await self.temp(message, 5, "Going for 5 minutes. Type !temp help for more info.")
                 return
-            command = msg.split()[1]
+            try:
+                command = msg.split()[1]
+            except IndexError:
+                return
             if command == 'for':
-                m = abs(int(msg.split()[-1]))
+                try:
+                    m = abs(int(msg.split()[-1]))
+                except ValueError:
+                    return
                 await self.temp(message, m,
                                 f"Going for {m} minute{'' if m == 1 else 's'}. Type '!temp stop' to stop.")
             elif command == 'go':
