@@ -116,9 +116,7 @@ class TempBot(discord.Client):
     @staticmethod
     def temp_embed(hw, footer=None):
         if hw.failed_to_load:
-            embed = discord.Embed(title='Error:', color=RED, description='Open Hardware Monitor is not running.')
-            embed.set_author(name=NAME, icon_url=ICON_URL)
-            return embed
+            return TempBot.plain_embed('Error:', 'Open Hardware Monitor is not running.')
 
         embed = discord.Embed(color=RED)
         embed.set_author(name=NAME, icon_url=ICON_URL)
