@@ -128,9 +128,9 @@ class TempBot(discord.Client):
             self.first_login = False
 
     @staticmethod
-    def plain_embed(title, description):
+    def plain_embed(title=None, description=None, name=NAME):
         embed = discord.Embed(title=title, description=description, color=RED)
-        embed.set_author(name=NAME, icon_url=ICON_URL)
+        embed.set_author(name=name, icon_url=ICON_URL)
         return embed
 
     @staticmethod
@@ -191,7 +191,7 @@ class TempBot(discord.Client):
             elif command == 'stop':
                 self.STOP = True
             elif command == 'help':
-                await message.channel.send(embed=TempBot.plain_embed('TempBot Commands:', HELP_MSG))
+                await message.channel.send(embed=TempBot.plain_embed(description=HELP_MSG, name='TempBot Help:'))
             elif command == 'exit':
                 # https://wxpython.org/Phoenix/docs/html/events_overview.html
 
