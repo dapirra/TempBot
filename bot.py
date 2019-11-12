@@ -172,6 +172,8 @@ class TempBot(discord.Client):
             else:
                 self.temp_msg = await message.channel.send(embed=embed)
             await asyncio.sleep(5)
+        embed = self.temp_embed(hw, 'Message is no longer updating.')
+        await self.temp_msg.edit(embed=embed)
         self.temp_msg = None
 
     async def on_message(self, message: discord.Message):
