@@ -196,7 +196,7 @@ class TempBot(discord.Client):
             if command == 'for':
                 await self.temp_stop_and_wait()
                 try:
-                    m = abs(int(msg.split()[-1]))
+                    m = abs(int(msg.split()[2]))
                 except ValueError:
                     return
                 await self.temp(message, m,
