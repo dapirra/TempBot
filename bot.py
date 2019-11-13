@@ -118,7 +118,7 @@ def size(num_bytes: int):
 
 class TempBot(discord.Client):
     STOP = False
-    temp_msg: discord.Message = None
+    temp_msg = None  # Union [discord.Message, None]
     first_login = True
 
     async def on_ready(self):
@@ -176,12 +176,17 @@ class TempBot(discord.Client):
         await self.temp_msg.edit(embed=embed)
         self.temp_msg = None
 
+    async def temp_stop_and_wait(self):
+        self.STOP = True
+        while self.temp_msg is not None:
+            await asyncio.sleep(0.5)
+
     async def on_message(self, message: discord.Message):
         msg: str = message.content.lower()
 
         if msg.startswith('!temp'):
             if len(msg) == 5:  # Must just be !temp
-                self.STOP = True
+                await self.temp_stop_and_wait()
                 await self.temp(message, 5, "Going for 5 minutes. Type !temp help for more info.")
                 return
             try:
@@ -189,7 +194,7 @@ class TempBot(discord.Client):
             except IndexError:
                 return
             if command == 'for':
-                self.STOP = True
+                await self.temp_stop_and_wait()
                 try:
                     m = abs(int(msg.split()[-1]))
                 except ValueError:
@@ -197,14 +202,14 @@ class TempBot(discord.Client):
                 await self.temp(message, m,
                                 f"Going for {m} minute{'' if m == 1 else 's'}. Type '!temp stop' to stop.")
             elif command == 'go':
-                self.STOP = True
+                await self.temp_stop_and_wait()
                 await self.temp(message)
             elif command == 'stop':
                 self.STOP = True
             elif command == 'help':
                 await message.channel.send(embed=TempBot.plain_embed(description=HELP_MSG, name='TempBot Help:'))
             elif command == 'exit':
-                self.STOP = True
+                await self.temp_stop_and_wait()
 
                 # https://wxpython.org/Phoenix/docs/html/events_overview.html
                 SomeNewEvent, EVT_SOME_NEW_EVENT = wx.lib.newevent.NewEvent()
