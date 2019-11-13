@@ -181,6 +181,7 @@ class TempBot(discord.Client):
 
         if msg.startswith('!temp'):
             if len(msg) == 5:  # Must just be !temp
+                self.STOP = True
                 await self.temp(message, 5, "Going for 5 minutes. Type !temp help for more info.")
                 return
             try:
@@ -188,6 +189,7 @@ class TempBot(discord.Client):
             except IndexError:
                 return
             if command == 'for':
+                self.STOP = True
                 try:
                     m = abs(int(msg.split()[-1]))
                 except ValueError:
@@ -195,14 +197,16 @@ class TempBot(discord.Client):
                 await self.temp(message, m,
                                 f"Going for {m} minute{'' if m == 1 else 's'}. Type '!temp stop' to stop.")
             elif command == 'go':
+                self.STOP = True
                 await self.temp(message)
             elif command == 'stop':
                 self.STOP = True
             elif command == 'help':
                 await message.channel.send(embed=TempBot.plain_embed(description=HELP_MSG, name='TempBot Help:'))
             elif command == 'exit':
-                # https://wxpython.org/Phoenix/docs/html/events_overview.html
+                self.STOP = True
 
+                # https://wxpython.org/Phoenix/docs/html/events_overview.html
                 SomeNewEvent, EVT_SOME_NEW_EVENT = wx.lib.newevent.NewEvent()
 
                 def handler(event):
