@@ -128,13 +128,6 @@ class TempBot(discord.Client):
             self.first_login = False
 
     @staticmethod
-    def gen_footer(minutes):
-        if minutes < 0:
-            return "Going indefinitely. Type '!temp stop' to stop."
-        elif minutes:
-            return f"Going for {minutes} minute{'' if minutes == 1 else 's'}. Type '!temp stop' to stop."
-
-    @staticmethod
     def plain_embed(title=None, description=None, name=NAME):
         embed = discord.Embed(title=title, description=description, color=RED)
         embed.set_author(name=name, icon_url=ICON_URL)
@@ -163,6 +156,13 @@ class TempBot(discord.Client):
             embed.set_footer(text=footer, icon_url=ICON_URL)
 
         return embed
+
+    @staticmethod
+    def gen_footer(minutes):
+        if minutes < 0:
+            return "Going indefinitely. Type '!temp stop' to stop."
+        elif minutes:
+            return f"Going for {minutes} minute{'' if minutes == 1 else 's'}. Type '!temp stop' to stop."
 
     async def temp(self, message, minutes=-1):
         finish_at = datetime.max if minutes == -1 else datetime.now() + timedelta(minutes=minutes)
