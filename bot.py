@@ -229,7 +229,7 @@ def main():
     def discord_thread():
         bot.run(TOKEN)
 
-    bot = TempBot()
+    bot = TempBot(activity=discord.Activity(name='!temp help', type=discord.ActivityType.listening))
     threading.Thread(target=discord_thread, name='DiscordThread').start()
 
     tray_menu = ['menu', [
