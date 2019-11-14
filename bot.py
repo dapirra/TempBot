@@ -128,6 +128,13 @@ class TempBot(discord.Client):
             self.first_login = False
 
     @staticmethod
+    def gen_footer(minutes):
+        if minutes < 0:
+            return "Going indefinitely. Type '!temp stop' to stop."
+        elif minutes:
+            return f"Going for {minutes} minute{'' if minutes == 1 else 's'}. Type '!temp stop' to stop."
+
+    @staticmethod
     def plain_embed(title=None, description=None, name=NAME):
         embed = discord.Embed(title=title, description=description, color=RED)
         embed.set_author(name=name, icon_url=ICON_URL)
@@ -157,13 +164,13 @@ class TempBot(discord.Client):
 
         return embed
 
-    async def temp(self, message, minutes=-1, footer="Going indefinitely. Type '!temp stop' to stop."):
+    async def temp(self, message, minutes=-1):
         finish_at = datetime.max if minutes == -1 else datetime.now() + timedelta(minutes=minutes)
         self.STOP = False
         while datetime.now() < finish_at and not self.STOP:
             hw = HardwareInfo()
 
-            embed = self.temp_embed(hw, footer)
+            embed = self.temp_embed(hw, TempBot.gen_footer(minutes))
             if self.temp_msg:
                 try:
                     await self.temp_msg.edit(embed=embed)
@@ -187,7 +194,7 @@ class TempBot(discord.Client):
         if msg.startswith('!temp'):
             if len(msg) == 5:  # Must just be !temp
                 await self.temp_stop_and_wait()
-                await self.temp(message, 5, "Going for 5 minutes. Type !temp help for more info.")
+                await self.temp(message, 5)
                 return
             try:
                 command = msg.split()[1]
@@ -199,8 +206,7 @@ class TempBot(discord.Client):
                     m = abs(int(msg.split()[2]))
                 except ValueError:
                     return
-                await self.temp(message, m,
-                                f"Going for {m} minute{'' if m == 1 else 's'}. Type '!temp stop' to stop.")
+                await self.temp(message, m)
             elif command == 'go':
                 await self.temp_stop_and_wait()
                 await self.temp(message)
