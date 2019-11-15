@@ -160,9 +160,9 @@ class TempBot(discord.Client):
     @staticmethod
     def gen_footer(minutes):
         if minutes < 0:
-            return "Going indefinitely. Type '!temp stop' to stop."
+            return "Updating indefinitely. Type '!temp stop' to stop."
         elif minutes:
-            return f"Going for {minutes} minute{'' if minutes == 1 else 's'}. Type '!temp stop' to stop."
+            return f"Updating for {minutes} minute{'' if minutes == 1 else 's'}. Type '!temp stop' to stop."
 
     async def temp(self, message, minutes=-1):
         finish_at = datetime.max if minutes == -1 else datetime.now() + timedelta(minutes=minutes)
