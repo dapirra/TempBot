@@ -158,11 +158,16 @@ class TempBot(discord.Client):
         return embed
 
     @staticmethod
-    def gen_footer(minutes):
+    def gen_footer(minutes, finish_at):
         if minutes < 0:
             return "Updating indefinitely. Type '!temp stop' to stop."
         elif minutes:
-            return f"Updating for {minutes} minute{'' if minutes == 1 else 's'}. Type '!temp stop' to stop."
+            stop_at = str(finish_at - datetime.now())
+            stop_at = stop_at.split('.', 1)[0]
+            if stop_at[0:2] == '0:':
+                stop_at = stop_at[2:]
+            return f"Updating for {minutes} minute{'' if minutes == 1 else 's'}. Type '!temp stop' to stop.\n" +\
+                   "Stopping in " + stop_at
 
     async def temp(self, message, minutes=-1):
         finish_at = datetime.max if minutes == -1 else datetime.now() + timedelta(minutes=minutes)
@@ -170,7 +175,7 @@ class TempBot(discord.Client):
         while datetime.now() < finish_at and not self.STOP:
             hw = HardwareInfo()
 
-            embed = self.temp_embed(hw, TempBot.gen_footer(minutes))
+            embed = self.temp_embed(hw, TempBot.gen_footer(minutes, finish_at))
             if self.temp_msg:
                 try:
                     await self.temp_msg.edit(embed=embed)
