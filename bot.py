@@ -255,6 +255,7 @@ def main():
         event = tray.Read()
         if event == 'Exit':
             tray.Hide()
+            bot.loop.create_task(bot.temp_stop_and_wait())
             bot.loop.create_task(bot.close())
             break
 
