@@ -28,6 +28,6 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          upx_exclude=[],
+          upx_exclude=['vcruntime140.dll', 'wxmsw30u_core_vc140.dll', 'wxmsw30u_stc_vc140.dll', 'wxbase30u_vc140.dll', 'wxmsw30u_adv_vc140.dll', 'msvcp140.dll', 'wxbase30u_net_vc140.dll'],
           runtime_tmpdir=None,
           console=False , icon='thermometer.ico')
