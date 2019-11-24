@@ -136,7 +136,8 @@ class TempBot(discord.Client):
     @staticmethod
     def temp_embed(hw, footer=None):
         if hw.failed_to_load:
-            return TempBot.plain_embed('Error:', 'Open Hardware Monitor is not running.')
+            return TempBot.plain_embed('Error:', 'Please start Open Hardware Monitor to see hardware status. '
+                                                 "This message will automatically update once it's started.")
 
         embed = discord.Embed(color=RED)
         embed.set_author(name=NAME, icon_url=ICON_URL)
