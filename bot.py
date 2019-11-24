@@ -14,6 +14,8 @@ NAME = 'TempBot'
 TOKEN = 'NjM4NjE5OTEzMTY2MjU4MTg2.XbfXOw.QTRJT7hADaYt_QgEnZ7CQPDsAnA'
 ICON = b'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAn1BMVEVHcEyVoqjR4+uywcgWGBnU3+drdHh8h4s9QkROVFfF1t3V4em6ytHN3eQMDQ40OTvK2+PX2+JhaWx5g4dxe39ma21+h4tWWFmGkJVtc3aCjZKVoqfmPTnpRUHlOTXafn7e8vvnfX3tamjrfX3mjI7mTUrmd3fimJvinaDkYF/jdXXrX13qcG+XZGPSaGfnqKx9YmKmZWTefn7omZvEZ2Z/KQCEAAAAHHRSTlMAn+SyBfFffyg40f6+4wEf3PlNeGugn6CfoH6f9oJbWAAAAGtJREFUGNNjYAADFhE2PgZkIKWgwIYiwGisz44qoKSMKiBuII8qII2uQtLQCFVAzEQRVUBCD01AVBfVUE5WbR1eDiQBLjVZWRVmBJ+FW0ZGRpUJSYWAppycFg+SgJCgugYrJ7KpHOzC/BAWAF9YBtSJcOPLAAAAAElFTkSuQmCC'
 ICON_URL = 'https://cdn.discordapp.com/avatars/638619913166258186/c267c2a4334d13f6f4e05409064adc75.webp'
+QUESTION_URL = 'https://i.imgur.com/Q7DqarN.png'  # https://imgur.com/a/Nf494H0
+INFO_URL = 'https://i.imgur.com/A3YXJzs.png'
 RED = 0xff0000
 HELP_MSG = '''TempBot is designed to display hardware information of the computer that it is running on.
 
@@ -154,7 +156,7 @@ class TempBot(discord.Client):
         embed.add_field(name='\u200b\nDisk Write:', inline=True, value=f'{hw.disk_write}')
 
         if footer:
-            embed.set_footer(text=footer, icon_url=ICON_URL)
+            embed.set_footer(text=footer, icon_url=INFO_URL)
 
         return embed
 
