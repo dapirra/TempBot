@@ -10,6 +10,8 @@ multidict==4.5.2
 numpy==1.17.3
 pefile==2019.4.18
 Pillow==6.2.1
+pip-autoremove==0.9.1
+pipdeptree==0.13.2
 PyInstaller==3.6
 PySimpleGUIWx==0.15.0
 pywin32==227
