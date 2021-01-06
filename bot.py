@@ -107,17 +107,17 @@ class HardwareInfo:
             'SELECT DiskWriteBytesPersec FROM Win32_PerfFormattedData_PerfDisk_PhysicalDisk WHERE NAME LIKE "%Total%"')[0]
             .DiskWriteBytesPersec)
 
-        self.disk_read = human_file_size(self._disk_read)
-        self.disk_write = human_file_size(self._disk_write)
+        self.disk_read = self.human_file_size(self._disk_read)
+        self.disk_write = self.human_file_size(self._disk_write)
 
-
-def human_file_size(num_bytes: int):
-    if num_bytes < 1024:
-        return f'{num_bytes} bytes'
-    elif num_bytes < 1048576:  # 1024*1024
-        return f'{round(num_bytes / 1024, 2)} KB'
-    else:
-        return f'{round(num_bytes / 1048576, 2)} MB'
+    @staticmethod
+    def human_file_size(num_bytes: int):
+        if num_bytes < 1024:
+            return f'{num_bytes} bytes'
+        elif num_bytes < 1048576:  # 1024*1024
+            return f'{round(num_bytes / 1024, 2)} KB'
+        else:
+            return f'{round(num_bytes / 1048576, 2)} MB'
 
 
 class TempBot(discord.Client):
