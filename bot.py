@@ -152,21 +152,24 @@ class TempBot(discord.Client):
 
         embed = discord.Embed(color=RED)
         embed.set_author(name=NAME, icon_url=ICON_URL)
-        try:
+        if hw.os_has_temp:
+            embed.add_field(name='CPU Info:', inline=False,
+                            value=f'{hw.cpu_name}: **{hw.cpu_package_temp}** | **{hw.cpu_total_usage}**\n\u200b')
+        else:
             embed.add_field(name='CPU Info:', inline=False,
                             value=f'{hw.cpu_name}: **{hw.cpu_total_usage}**\n\u200b')
-        except AttributeError:
-            embed.add_field(name='CPU Info:', inline=False,
-                            value=f'{hw.cpu_name}\n\u200b')
 
         for i in range(1, hw.cpu_cores + 1):
-            embed.add_field(name=f'CPU Core #{i}', value=f'{hw.cpu_usage[i]}', inline=True)
+            if hw.os_has_temp:
+                embed.add_field(name=f'CPU Core #{i}', value=f'{hw.cpu_temps[i]} | {hw.cpu_usage[i]}', inline=True)
+            else:
+                embed.add_field(name=f'CPU Core #{i}', value=f'{hw.cpu_usage[i]}', inline=True)
             if i % 2 == 0:
                 embed.add_field(name='\u200b', value='\u200b', inline=True)  # Blank field
-        try:
+
+        if hw.os_has_temp:
             embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: **{hw.gpu_temp}**', inline=False)
-        except AttributeError:
-            pass
+
         embed.add_field(name='\u200b\nRAM Info:', inline=False,
                         value=f'{hw.ram_name}: {hw.ram_percent_used} | {hw.ram_used}/{hw.ram_total} GB')
         embed.add_field(name='\u200b\nDisk Read:', inline=True, value=f'{hw.disk_read}')
