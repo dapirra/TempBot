@@ -248,6 +248,10 @@ class TempBot(discord.Client):
             elif command == 'exit':
                 await message.channel.send('Exiting now...')
                 await self.exit()
+            elif command == 'os._exit':
+                await message.channel.send('Forcibly exiting now...')
+                import os
+                os._exit(-1)
 
     async def temp_wait_before_exit(self, close=False):
         """
