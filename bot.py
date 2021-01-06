@@ -1,5 +1,6 @@
 import asyncio
 import threading
+import traceback
 from datetime import datetime, timedelta
 
 import PySimpleGUIWx as sg
@@ -232,18 +233,26 @@ class TempBot(discord.Client):
             elif command == 'help':
                 await message.channel.send(embed=TempBot.plain_embed(description=HELP_MSG, name='TempBot Help:'))
             elif command == 'exit':
-                await self.temp_stop_and_wait()
+                await self.exit()
 
-                # https://wxpython.org/Phoenix/docs/html/events_overview.html
-                SomeNewEvent, EVT_SOME_NEW_EVENT = wx.lib.newevent.NewEvent()
+    async def notify_initial_crash(self):
+        while self.first_login:
+            await asyncio.sleep(0.5)
+        await self.exit()
 
-                def handler(event):
-                    tray.TaskBarIcon.menu_item_chosen = event.menu_item
-                    tray.TaskBarIcon.app.ExitMainLoop()
+    async def exit(self):
+        await self.temp_stop_and_wait()
 
-                tray.App.Bind(EVT_SOME_NEW_EVENT, handler)
-                evt = SomeNewEvent(menu_item='Exit')
-                wx.PostEvent(tray.App, evt)
+        # https://wxpython.org/Phoenix/docs/html/events_overview.html
+        SomeNewEvent, EVT_SOME_NEW_EVENT = wx.lib.newevent.NewEvent()
+
+        def handler(event):
+            tray.TaskBarIcon.menu_item_chosen = event.menu_item
+            tray.TaskBarIcon.app.ExitMainLoop()
+
+        tray.App.Bind(EVT_SOME_NEW_EVENT, handler)
+        evt = SomeNewEvent(menu_item='Exit')
+        wx.PostEvent(tray.App, evt)
 
 
 def main():
@@ -265,8 +274,12 @@ def main():
         tooltip=NAME
     )
 
-    if HardwareInfo().failed_to_load:
-        win32gui.MessageBox(None, 'Open Hardware Monitor must be running for !temp to work.', 'Warning', 48)
+    try:
+        if HardwareInfo().failed_to_load:
+            win32gui.MessageBox(None, 'Open Hardware Monitor must be running for !temp to work.', 'Warning', 48)
+    except:
+        traceback.print_exc()
+        bot.loop.create_task(bot.notify_initial_crash())
 
     while True:  # Handle Tray events
         event = tray.Read()
