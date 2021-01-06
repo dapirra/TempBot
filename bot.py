@@ -90,7 +90,10 @@ class HardwareInfo:
         self.ram_used = f'{round(self._ram_used, 1)}'
         self.ram_available = f'{round(self._ram_available, 1)}'
         self.ram_total = f'{round(self._ram_used + self._ram_available)}'
-        self.cpu_cores = len(self.cpu_usage)
+        self.cpu_temps_len = len(self.cpu_temps)
+        self.cpu_usage_len = len(self.cpu_usage)
+        self.cpu_cores = self.cpu_usage_len
+        self.os_has_temp = self.cpu_temps_len == self.cpu_usage_len
 
         for device in device_info:
             if device.HardwareType == 'CPU':
