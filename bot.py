@@ -107,14 +107,14 @@ class HardwareInfo:
             'SELECT DiskWriteBytesPersec FROM Win32_PerfFormattedData_PerfDisk_PhysicalDisk WHERE NAME LIKE "%Total%"')[0]
             .DiskWriteBytesPersec)
 
-        self.disk_read = size(self._disk_read)
-        self.disk_write = size(self._disk_write)
+        self.disk_read = human_file_size(self._disk_read)
+        self.disk_write = human_file_size(self._disk_write)
 
 
-def size(num_bytes: int):
+def human_file_size(num_bytes: int):
     if num_bytes < 1024:
         return f'{num_bytes} bytes'
-    elif num_bytes < 1048576:
+    elif num_bytes < 1048576:  # 1024*1024
         return f'{round(num_bytes / 1024, 2)} KB'
     else:
         return f'{round(num_bytes / 1048576, 2)} MB'
@@ -123,13 +123,13 @@ def size(num_bytes: int):
 class TempBot(discord.Client):
     STOP = False
     temp_msg = None  # Union [discord.Message, None]
-    first_login = True
+    initial_login = True
 
     async def on_ready(self):
         print('Logged in as', self.user)
-        if self.first_login:
+        if self.initial_login:
             pythoncom.CoInitialize()  # Prevents crash that occurs bc not on main thread
-            self.first_login = False
+            self.initial_login = False
 
     @staticmethod
     def plain_embed(title=None, description=None, name=NAME):
@@ -201,19 +201,12 @@ class TempBot(discord.Client):
         await self.temp_msg.edit(embed=embed)
         self.temp_msg = None
 
-    async def temp_stop_and_wait(self, close=False):
-        self.STOP = True
-        while self.temp_msg is not None:
-            await asyncio.sleep(0.5)
-        if close:
-            await self.close()
-
     async def on_message(self, message: discord.Message):
         msg: str = message.content.lower()
 
         if msg.startswith('!temp'):
             if len(msg) == 5:  # Must just be !temp
-                await self.temp_stop_and_wait()
+                await self.temp_wait_before_exit()
                 await self.temp(message, 5)
                 return
             try:
@@ -221,14 +214,14 @@ class TempBot(discord.Client):
             except IndexError:
                 return
             if command == 'for':
-                await self.temp_stop_and_wait()
+                await self.temp_wait_before_exit()
                 try:
                     m = abs(int(msg.split()[2]))
                 except ValueError:
                     return
                 await self.temp(message, m)
             elif command == 'go':
-                await self.temp_stop_and_wait()
+                await self.temp_wait_before_exit()
                 await self.temp(message)
             elif command == 'stop':
                 self.STOP = True
@@ -237,13 +230,27 @@ class TempBot(discord.Client):
             elif command == 'exit':
                 await self.exit()
 
-    async def notify_initial_crash(self):
-        while self.first_login:
+    async def temp_wait_before_exit(self, close=False):
+        """
+        Waits for TempBot to put 'Message is no longer updating.' in the status of the message before exiting.
+
+        :param close: Whether or not TempBot should close it's connection to discord after waiting.
+        """
+        self.STOP = True
+        while self.temp_msg is not None:  # When temp_msg is None
+            await asyncio.sleep(0.5)
+        if close:
+            await self.close()
+
+    async def notify_startup_crash(self):
+        """If a crash happens during startup, wait for TempBot to sign into discord first, so that the connection can be
+        gracefully closed later."""
+        while self.initial_login:
             await asyncio.sleep(0.5)
         await self.exit()
 
     async def exit(self):
-        await self.temp_stop_and_wait()
+        await self.temp_wait_before_exit()
 
         # https://wxpython.org/Phoenix/docs/html/events_overview.html
         SomeNewEvent, EVT_SOME_NEW_EVENT = wx.lib.newevent.NewEvent()
@@ -281,13 +288,13 @@ def main():
             win32gui.MessageBox(None, 'Open Hardware Monitor must be running for !temp to work.', 'Warning', 48)
     except:
         traceback.print_exc()
-        bot.loop.create_task(bot.notify_initial_crash())
+        bot.loop.create_task(bot.notify_startup_crash())
 
     while True:  # Handle Tray events
         event = tray.Read()
         if event == 'Exit':
             tray.Hide()
-            bot.loop.create_task(bot.temp_stop_and_wait(close=True))
+            bot.loop.create_task(bot.temp_wait_before_exit(close=True))
             break
 
 
