@@ -246,6 +246,7 @@ class TempBot(discord.Client):
             elif command == 'help':
                 await message.channel.send(embed=TempBot.plain_embed(description=HELP_MSG, name='TempBot Help:'))
             elif command == 'exit':
+                await message.channel.send('Exiting now...')
                 await self.exit()
 
     async def temp_wait_before_exit(self, close=False):
