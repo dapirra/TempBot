@@ -33,6 +33,9 @@ HELP_MSG = '''TempBot is designed to display hardware information of the compute
 **!temp stop**
 > TempBot will stop updating the message that displays hardware information.
 
+**!temp get x**
+> TempBot will get 1 hardware attribute in particular (useful for debugging). Type '!temp get attributes' to see a list of attributes.
+
 **!temp help**
 > Displays this help message.
 
@@ -109,6 +112,7 @@ class HardwareInfo:
 
         self.disk_read = self.human_file_size(self._disk_read)
         self.disk_write = self.human_file_size(self._disk_write)
+        self.attributes = '\n'.join(filter(lambda x: not x.startswith('_'), dir(self)))
 
     @staticmethod
     def human_file_size(num_bytes: int):
@@ -201,6 +205,12 @@ class TempBot(discord.Client):
         await self.temp_msg.edit(embed=embed)
         self.temp_msg = None
 
+    async def get_hw_attr(self, message: discord.Message, attr: str):
+        try:
+            await message.channel.send(HardwareInfo().__getattribute__(attr))
+        except AttributeError:
+            await message.channel.send(f'Error: No {attr} attribute exists.')
+
     async def on_message(self, message: discord.Message):
         msg: str = message.content.lower()
 
@@ -225,6 +235,8 @@ class TempBot(discord.Client):
                 await self.temp(message)
             elif command == 'stop':
                 self.STOP = True
+            elif command == 'get':
+                await self.get_hw_attr(message, msg.split()[2])
             elif command == 'help':
                 await message.channel.send(embed=TempBot.plain_embed(description=HELP_MSG, name='TempBot Help:'))
             elif command == 'exit':
