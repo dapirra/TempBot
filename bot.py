@@ -201,10 +201,12 @@ class TempBot(discord.Client):
         await self.temp_msg.edit(embed=embed)
         self.temp_msg = None
 
-    async def temp_stop_and_wait(self):
+    async def temp_stop_and_wait(self, close=False):
         self.STOP = True
         while self.temp_msg is not None:
             await asyncio.sleep(0.5)
+        if close:
+            await self.close()
 
     async def on_message(self, message: discord.Message):
         msg: str = message.content.lower()
@@ -285,8 +287,7 @@ def main():
         event = tray.Read()
         if event == 'Exit':
             tray.Hide()
-            bot.loop.create_task(bot.temp_stop_and_wait())
-            bot.loop.create_task(bot.close())
+            bot.loop.create_task(bot.temp_stop_and_wait(close=True))
             break
 
 
