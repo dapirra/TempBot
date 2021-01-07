@@ -80,3 +80,9 @@ class HardwareInfo:
             return f'{round(num_bytes / 1024, 2)} KB'
         else:
             return f'{round(num_bytes / 1048576, 2)} MB'
+
+
+if __name__ == '__main__':
+    """Used for testing"""
+    hw = HardwareInfo()
+    print('Breakpoint placeholder')
