@@ -60,6 +60,12 @@ class HardwareInfo:
             elif device.HardwareType.upper().startswith('GPU'):
                 self.gpu_name = device.Name
 
+        try:
+            if self.gpu_name:
+                self.os_has_gpu = True
+        except AttributeError:
+            self.os_has_gpu = False
+
         self._disk_read = int(cimv2.query(
             'SELECT DiskReadBytesPersec FROM Win32_PerfFormattedData_PerfDisk_PhysicalDisk WHERE NAME LIKE "%Total%"')[0]
             .DiskReadBytesPersec)
