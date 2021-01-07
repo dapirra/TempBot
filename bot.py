@@ -86,7 +86,7 @@ class TempBot(discord.Client):
             if i % 2 == 0:
                 embed.add_field(name='\u200b', value='\u200b', inline=True)  # Blank field
 
-        if hw.os_has_temp:
+        if hw.os_has_gpu and hw.os_has_temp:
             embed.add_field(name='\u200b\nGPU Info:', value=f'{hw.gpu_name}: **{hw.gpu_temp}**', inline=False)
 
         embed.add_field(name='\u200b\nRAM Info:', inline=False,
