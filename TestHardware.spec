@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['testing.py'],
+a = Analysis(['TestHardware.py'],
              pathex=['X:\\Workspaces\\PyCharm\\DiscordTempBot'],
              binaries=[],
              datas=[],
@@ -21,7 +21,7 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='testing',
+          name='TestHardware',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
@@ -34,7 +34,7 @@ coll = COLLECT(exe,
                strip=False,
                upx=False,
                upx_exclude=[],
-               name='testing')
+               name='TestHardware')
 
 # Single file
 #exe = EXE(pyz,
@@ -43,7 +43,7 @@ coll = COLLECT(exe,
 #          a.zipfiles,
 #          a.datas,
 #          [],
-#          name='testing',
+#          name='TestHardware',
 #          debug=False,
 #          bootloader_ignore_signals=False,
 #          strip=False,
