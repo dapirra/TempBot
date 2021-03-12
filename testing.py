@@ -1,4 +1,3 @@
-import win32gui
 import wmi
 
 w = wmi.WMI(namespace=r'root\OpenHardwareMonitor')
@@ -27,4 +26,4 @@ print('-' * 25)
 # print(temp)
 # print(temp / 10 - 273.15)
 
-print(win32gui.MessageBox(None, 'Hello', 'Yo', 16))
+print('Test Complete.')
