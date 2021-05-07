@@ -3,7 +3,7 @@ altgraph==0.17
 async-timeout==3.0.1
 attrs==20.3.0
 chardet==3.0.4
-discord.py==1.6.0
+discord.py==1.7.2
 future==0.18.2
 idna==3.1
 importlib-metadata==3.7.2
@@ -13,7 +13,7 @@ pefile==2019.4.18
 Pillow==8.1.2
 pip-autoremove==0.9.1
 pipdeptree==2.0.0
-pyinstaller==4.2
+pyinstaller==4.3
 pyinstaller-hooks-contrib==2021.1
 PySimpleGUIWx==0.17.2
 pywin32==300
